@@ -2,13 +2,14 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import Notiflix from 'notiflix';
 
-
-// const inputDate = document.querySelector('#datetime-picker')
 const btnStart = document.querySelector('button[data-start]')
 const days = document.querySelector('span[data-days]')
 const hours = document.querySelector('span[data-hours]')
 const minutes = document.querySelector('span[data-minutes]')
 const seconds = document.querySelector('span[data-seconds]')
+let timerInterval = null;
+
+btnStart.disabled = true;
 
 const options = {
   enableTime: true,
@@ -16,30 +17,39 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+      console.log(selectedDates[0]);
+      if (selectedDates[0] <= new Date()) {           
+            return Notiflix.Notify.failure('Please choose a date in the future');
+      } else {
+          btnStart.disabled = false;
+          
+          btnStart.addEventListener('click', onClick);
+      }
+      function onClick() {
+          timerInterval = setInterval(handlerTime, 1000);
+      }
+      function handlerTime() {
+          const diffTime = selectedDates[0] - new Date();
+          days.textContent =
+              `${convertMs(diffTime).days.toString().padStart(2, 0)}`;
+          hours.textContent =
+              `${convertMs(diffTime).hours.toString().padStart(2, 0)}`;
+          minutes.textContent =
+              `${convertMs(diffTime).minutes.toString().padStart(2, 0)}`;
+          seconds.textContent =
+              `${convertMs(diffTime).seconds.toString().padStart(2, 0)}`;
+              
+          if (diffTime <= 500) {
+              days.textContent = `00`;
+              hours.textContent = `00`;
+              minutes.textContent = `00`;
+              seconds.textContent = `00`;
+            }
+      }
+  
   },
 };
-
-const flat = flatpickr("#datetime-picker", options)
-// btnStart.disabled = true;
-btnStart.addEventListener('click', () => {
-    
-        if (flat.selectedDates[0] <= new Date()) {           
-            return Notiflix.Notify.failure('Please choose a date in the future');
-    }
-    
-    setInterval(() => {
-        const currentDay = new Date();
-        days.textContent = flat.selectedDates[0].getDay() - currentDay.getDay() -flat.selectedDates[0].getDay()
-        hours.textContent = flat.selectedDates[0].getHours() -currentDay.getHours()
-        minutes.textContent = flat.selectedDates[0].getMinutes() - currentDay.getMinutes()
-        seconds.textContent = flat.selectedDates[0].getSeconds() - currentDay.getSeconds()
-        console.log(convertMs(flat.selectedDates[0] - currentDay));
-    }, 1000)
-})
-
-
-
+flatpickr("#datetime-picker", options)
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -58,8 +68,4 @@ function convertMs(ms) {
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
-}
-
-// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+};
