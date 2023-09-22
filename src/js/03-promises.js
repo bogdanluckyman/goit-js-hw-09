@@ -15,6 +15,11 @@ function createPromises(amount, delay, step) {
   const promises = [];
 
   for (let i = 1; i <= amount; i++) {
+
+  if (step < 0 || delay < 0 || amount <= 0) {
+  return Notiflix.Notify.info('🤌Сhoose the correct value');
+  }
+
     const position = i;
     const promiseDelay = delay + (i - 1) * step;
     const promise = createPromise(position, promiseDelay);
@@ -44,3 +49,4 @@ function createPromise(position, delay) {
     }, delay);
   });
 };
+
