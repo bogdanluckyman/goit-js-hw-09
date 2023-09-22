@@ -7,7 +7,15 @@ const days = document.querySelector('span[data-days]')
 const hours = document.querySelector('span[data-hours]')
 const minutes = document.querySelector('span[data-minutes]')
 const seconds = document.querySelector('span[data-seconds]')
+const input = document.querySelector('#datetime-picker')
+const resetBtn = document.querySelector('.js-btn')
 let timerInterval = null;
+
+resetBtn.addEventListener('click', resetDate)
+
+function resetDate() {
+    window.location.reload()
+}
 
 btnStart.disabled = true;
 
@@ -21,12 +29,15 @@ const options = {
       if (selectedDates[0] <= new Date()) {           
             return Notiflix.Notify.failure('Please choose a date in the future');
       } else {
+          
           btnStart.disabled = false;
           
           btnStart.addEventListener('click', onClick);
       }
       function onClick() {
+          input.disabled = true;          
           timerInterval = setInterval(handlerTime, 1000);
+          btnStart.disabled = true;
       }
       function handlerTime() {
           const diffTime = selectedDates[0] - new Date();
@@ -44,7 +55,8 @@ const options = {
               hours.textContent = `00`;
               minutes.textContent = `00`;
               seconds.textContent = `00`;
-            }
+          }
+          
       }
   
   },

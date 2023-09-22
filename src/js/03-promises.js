@@ -13,13 +13,11 @@ form.addEventListener('submit', function (event) {
 
 function createPromises(amount, delay, step) {
   const promises = [];
-
-  for (let i = 1; i <= amount; i++) {
-
+  form.reset()
   if (step < 0 || delay < 0 || amount <= 0) {
   return Notiflix.Notify.info('🤌Сhoose the correct value');
   }
-
+  for (let i = 1; i <= amount; i++) {
     const position = i;
     const promiseDelay = delay + (i - 1) * step;
     const promise = createPromise(position, promiseDelay);
